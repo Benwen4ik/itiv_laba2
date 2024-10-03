@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить пост</title>
+</head>
+<body>
+    <h1>Добавить пост о путешествии</h1>
+    <form action="submit_post.php" method="post" enctype="multipart/form-data">
+        <label for="title">Заголовок:</label>
+        <input type="text" id="title" name="title" required><br>
+    
+        <label for="content">Текст поста:</label><br>
+        <textarea id="content" name="content" required></textarea><br>
+    
+        <label for="location">Местоположение:</label>
+        <input type="text" id="location" name="location"><br>
+    
+        <label for="images">Прикрепить файлы:</label>
+        <input type="file" id="images" name="images[]" multiple><br>
+    
+        <input type="submit" value="Добавить пост">
+    </form>
+</body>
+</html>

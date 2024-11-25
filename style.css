@@ -1,8 +1,26 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 10px; /* Убираем отступы по умолчанию */
     background-color: #f4f4f4;
     color: #333;
+    position: relative; /* Для позиционирования аватарки */
+}
+ 
+.header {
+    display: flex;
+    justify-content: space-between; /* Раздвигает элементы по горизонтали */
+    align-items: center; /* Выравнивание по вертикали */
+    padding: 10px 20px; /* Отступы вокруг заголовка */
+    /* background-color: #fff; Фоновый цвет для контраста */
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); Тень для заголовка */
+}
+
+.user-avatar {
+    width: 50px; /* Ширина аватарки */
+    height: 50px; /* Высота аватарки */
+    border-radius: 50%; /* Круглая аватарка */
+    border: 2px solid #fff; /* Обводка */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Тень */
 }
 
 h1 {
@@ -56,8 +74,8 @@ label {
 }
 
 input[type="text"],
-input[type="password"],  /* Добавлено для поля пароля */
-textarea, 
+input[type="password"],
+textarea,
 input[type="file"] {
     width: 100%;
     padding: 10px;

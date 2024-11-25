@@ -1,22 +1,18 @@
 <?php
-include 'db.php'; // Подключение к базе данных
-
+include 'db.php';
+// include 'auth.php';
 session_start();
 
-// Проверка, если пользователь не авторизован
 if (!isset($_SESSION['user_id'])) {
-    header("Location: add_post.php?message=login_error"); // Перенаправление на страницу входа
+    header("Location: add_post.php?message=login_error");
     exit();
 }
 
-// Проверка, была ли отправлена форма
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Получаем данные поста
     $title = $_POST['title'];
     $location = $_POST['location'];
     $content = $_POST['content'];
 
-    // Валидация заголовка и местоположения
     if (strlen($title) > 50) {
         header("Location: add_post.php?message=title_error");
         exit();
@@ -27,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Обработка загрузки изображений
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
     $images = [];
 
@@ -36,7 +31,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
                 $fileType = $_FILES['images']['type'][$key];
 
-                // Проверка на допустимый тип файла
                 if (in_array($fileType, $allowedTypes)) {
                     $imgData = file_get_contents($tmp_name);
                     $images[] = $imgData; // Сохраняем изображение для дальнейшей вставки

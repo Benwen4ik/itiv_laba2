@@ -30,7 +30,7 @@
                 ?>
             </span>
         <?php endif; ?>
-    </div>
+    </div> 
     <form action="submit_post.php" method="post" enctype="multipart/form-data">
         <label for="title">Заголовок:</label>
         <input type="text" id="title" name="title" required maxlength="50">

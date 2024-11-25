@@ -1,6 +1,7 @@
 <?php
-include 'db.php'; // Подключение к базе данных
-session_start();
+include 'db.php';
+include 'auth.php';
+// session_start();
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -10,7 +11,6 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 
 try {
-    // Получаем избранные посты пользователя
     $sql = "SELECT posts.*, users.username 
             FROM posts 
             JOIN likes ON posts.id = likes.post_id 

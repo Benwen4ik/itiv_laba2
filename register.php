@@ -48,23 +48,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         body {
             display: flex;
-            justify-content: center; /* Центрируем содержимое по горизонтали */
-            align-items: center; /* Центрируем содержимое по вертикали */
-            height: 100vh; /* Высота на весь экран */
-            margin: 0; /* Убираем отступы по умолчанию */
+            justify-content: center; 
+            align-items: center;
+            height: 100vh; 
+            margin: 0; 
         }
         .form-container {
-            text-align: center; /* Центрируем текст внутри контейнера */
-            width: 100%; /* Ширина 100% */
-            max-width: 400px; /* Максимальная ширина контейнера */
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
         }
         .form-group {
-            margin-bottom: 20px; /* Отступ между полями */
+            margin-bottom: 20px;
         }
         input[type="text"], input[type="password"] {
-            width: 100%; /* Ширина полей на 100% */
-            padding: 10px; /* Внутренние отступы */
-            box-sizing: border-box; /* Учитываем отступы в ширину */
+            width: 100%; 
+            padding: 10px;
+            box-sizing: border-box;
         }
     </style>
 </head>

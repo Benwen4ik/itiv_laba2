@@ -1,14 +1,15 @@
 <?php
-include 'db.php'; // Подключение к базе данных
-
-session_start();
+include 'db.php';
+include 'auth.php';
+// session_start();
 
 // $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 
-if (isset($_SESSION['user_id'])) {
-    $username = $_SESSION['username'];
-    $userRole = $_SESSION['role'] ?? 'user';
-}
+
+
+
+$selectedLanguage = $_COOKIE['language'] ?? 'ru';
+$greetingMessage = ($selectedLanguage === 'eng') ? "Welcome back, $username!" : "Добро пожаловать обратно, $username!";
 
 // Обработка удаления записи
 if (isset($_GET['delete'])) {
@@ -93,39 +94,78 @@ if (isset($_GET['unlike']) && isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Получение коэффициентов из базы данных
+$sql = "SELECT weight_likes, weight_location, weight_author FROM ranking_weights WHERE id = 1";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $weight_author = $row['weight_author'];
+    $weight_location = $row['weight_location'];
+    $weight_likes = $row['weight_likes'];
+} else {
+    $weight_author = 0.5;
+    $weight_location = 0.3;
+    $weight_likes = 0.2;
+}
+
 try {
     // Получаем значения поиска, если они есть
     $search = isset($_GET['search']) ? trim($_GET['search']) : '';
     $date = isset($_GET['date']) ? trim($_GET['date']) : '';
     $message = isset($_GET['message']) ? $_GET['message'] : '';
 
-    // Подготовка SQL-запроса для поиска
+    // Получение user_id из сессии
+    $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
     $sql = "SELECT posts.*, users.username, 
             (SELECT COUNT(*) FROM likes WHERE post_id = posts.id) AS likes_count,
-            (SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = posts.id) AS user_liked
-            FROM posts 
-            JOIN users ON posts.user_id = users.id 
-            WHERE (title LIKE ? OR content LIKE ? OR location LIKE ? OR users.username LIKE ?)";
+            (SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = posts.id) AS user_liked,
+            (SELECT COUNT(*) FROM likes l INNER JOIN posts p ON l.post_id = p.id 
+             WHERE l.user_id IN (SELECT user_id FROM likes WHERE user_id = ?)
+             AND p.user_id = posts.user_id) AS user_favorite_count,
+            (SELECT COUNT(*) FROM likes l 
+             JOIN posts p ON l.post_id = p.id 
+             WHERE l.user_id = ? AND p.location = posts.location) AS liked_location_count
+        FROM posts 
+        JOIN users ON posts.user_id = users.id 
+        WHERE (title LIKE ? OR content LIKE ? OR location LIKE ? OR users.username LIKE ?)
+    ";
+
+//  (SELECT COUNT(*) FROM post_images WHERE post_id = posts.id) AS image_count,
 
     // Добавляем фильтр по дате, если указано
     if ($date) {
         $sql .= " AND DATE(created_at) = DATE(?)";
     }
 
-    $sql .= " ORDER BY created_at DESC";
+    // Сортировка по количеству лайков от любимых пользователей и дате создания
+    $sql .= "ORDER BY 
+        (user_favorite_count * ?) +
+        (liked_location_count * ?) +
+        (likes_count * ?) DESC, created_At DESC";
+
     $stmt = $conn->prepare($sql);
 
     $searchTerm = "%" . $search . "%";
-    $params = [isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null, $searchTerm, $searchTerm, $searchTerm, $searchTerm];
+    $params = [$userId, $userId, $userId, $searchTerm, $searchTerm, $searchTerm, $searchTerm];
 
-    // Добавляем параметры для даты
     if ($date) {
         $params[] = $date;
     }
 
-    // Определяем типы параметров для bind_param
-    $types = "issss" . (isset($params[5]) ? "s" : "");
-    $stmt->bind_param($types, ...$params);
+     // Добавляем веса
+     $params[] = $weight_author;
+     $params[] = $weight_location; 
+     $params[] = $weight_likes;    
+
+     $types = "iiisssssddd";
+
+     if (!$date) {
+        $types = "iiissssddd";
+    }
+
+     $stmt->bind_param($types, ...$params);
 
     $stmt->execute();
     $result = $stmt->get_result();
@@ -143,13 +183,44 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Дневник путешественника</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px; /* Убираем отступы по умолчанию */
+            background-color: #f4f4f4;
+            color: #333;
+            position: relative; /* Для позиционирования аватарки */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between; /* Раздвигает элементы по горизонтали */
+            align-items: center; /* Выравнивание по вертикали */
+            padding: 10px 20px;  /* Отступы вокруг заголовка */
+            /* background-color: #fff; Фоновый цвет для контраста */
+            /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); Тень для заголовка */
+        }
+
+        .user-avatar {
+            width: 80px; /* Ширина аватарки */
+            height: 80px; /* Высота аватарки */
+            border-radius: 50%; /* Круглая аватарка */
+            border: 2px solid #fff; /* Обводка */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Тень */
+        }
+
+    </style>
 </head>
-
 <body>
-
-    <h1>Дневник путешественника</h1>
+<h1>Дневник путешественника</h1>
     <?php if (isset($_SESSION['user_id'])): ?>
-        <h2>Привет, <?php echo htmlspecialchars($username); ?>!</h2>
+         <!-- Отображение аватарки пользователя -->
+         <div class="header">
+        <h2  style="color: <?php echo ($selectedLanguage === 'eng') ? 'red' : 'green'; ?>;">
+        <?php echo ($selectedLanguage === 'eng') ? "Welcome back, " . htmlspecialchars($username) . "!" : "Добро пожаловать обратно, " . htmlspecialchars($username) . "!"; ?>
+    </h2>
+    <img src="<?php echo htmlspecialchars($avatar); ?>" alt="Аватар" class="user-avatar">
+    </div>
     <?php endif; ?>
 
     <!-- Сообщение о результате создания поста -->
@@ -175,6 +246,7 @@ try {
 
     <?php if (isset($_SESSION['user_id'])): ?>
         <a href="logout.php" class="add-post-btn">Выход</a>
+        <a href="setting.php" class="add-post-btn">Настройки</a>
         <?php if ($userRole === 'traveler' || $userRole === 'admin'): ?>
             <a href="add_post.php" class="add-post-btn">Добавить пост</a>
         <?php endif; ?>
@@ -189,7 +261,6 @@ try {
         <!-- <h2>Привет, <?php echo htmlspecialchars($username); ?>!</h2> -->
         <a href="view_favorites.php" class="add-post-btn">Посмотреть избранные посты</a>
     <?php endif; ?>
-
     <!-- Форма поиска -->
     <form action="view_posts.php" method="GET" class="search">
         <input type="text" name="search"
@@ -277,6 +348,22 @@ try {
             ?>
         </tbody>
     </table>
+
+    <!-- <?php if (isset($_SESSION['user_id'])): ?>
+        <script>
+            <?php if (isset($greetingMessage)): ?>
+                alert("<?php echo addslashes($greetingMessage); ?>");
+            <?php endif; ?>
+        </script>
+    <?php endif; ?> -->
+
+    <!-- <?php if (isset($_SESSION['user_id'])): ?>
+        <h2 style="color: <?php echo ($selectedLanguage === 'eng') ? 'red' : 'green'; ?>;">
+            <?php echo ($selectedLanguage === 'eng') ? "Welcome back, " . htmlspecialchars($username) . "!" : "Добро пожаловать обратно, " . htmlspecialchars($username) . "!"; ?>
+        </h2>
+    <?php endif; ?> -->
+
+
 
 </body>
 

@@ -1,6 +1,7 @@
 <?php
 include 'db.php'; // Подключение к базе данных
-session_start();
+include 'auth.php';
+// session_start();
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");

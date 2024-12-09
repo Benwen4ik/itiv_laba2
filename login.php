@@ -1,6 +1,8 @@
 <?php
 session_start();
-include 'db.php'; // Подключение к базе данных
+include 'db.php';
+
+$selectedTheme = $_COOKIE['theme'] ?? 'light';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
@@ -22,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($rememberMe) {
                 // Генерация токена
                 $token = bin2hex(random_bytes(16));
-                setcookie('auth_token', $token, time() + 3600, "/"); 
+                setcookie('auth_token', $token, time() + 3600, "/");
                 setcookie("language", $user['lang'], time() + 3600, "/");
 
                 // Сохраните токен в базе данных для текущего пользователя
@@ -31,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $updateTokenStmt->bind_param("si", $token, $_SESSION['user_id']);
                 $updateTokenStmt->execute();
             }
-            header("Location: view_posts.php?message=login");
+            header("Location: index.php?message=login");
             exit();
         } else {
             $error = "Неверный пароль";
@@ -41,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     $stmt->close();
 }
+
+include 'header.php';
 ?>
 
 <!DOCTYPE html>
@@ -49,15 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Авторизация</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+        href="<?php echo $selectedTheme === 'dark' ? 'styles/style_night.css' : 'styles/style_light.css'; ?>">
     <style>
-        body {
+        .body-form {
             display: flex;
             justify-content: center;
             /* Центрируем содержимое по горизонтали */
             align-items: center;
             /* Центрируем содержимое по вертикали */
-            height: 100vh;
+            height: 75vh;
             /* Высота на весь экран */
             margin: 0;
             /* Убираем отступы по умолчанию */
@@ -90,27 +95,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
+    <div class="body-form">
+        <div class="form-container">
+            <h1>Вход</h1>
+            <?php if (isset($error))
+                echo "<p style='color:red;'>$error</p>"; ?>
+            <form action="login.php" method="POST">
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="Имя пользователя" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Пароль" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="remember_me"> Запомнить меня
+                    </label>
+                </div>
+                <input type="submit" value="Войти">
+            </form>
 
-    <div class="form-container">
-        <h1>Вход</h1>
-        <?php if (isset($error))
-            echo "<p style='color:red;'>$error</p>"; ?>
-        <form action="login.php" method="POST">
-            <div class="form-group">
-                <input type="text" name="username" placeholder="Имя пользователя" required>
-            </div>
-            <div class="form-group">
-                <input type="password" name="password" placeholder="Пароль" required>
-            </div>
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" name="remember_me"> Запомнить меня
-                </label>
-            </div>
-            <input type="submit" value="Войти">
-        </form>
-
-        <a class="add-post-btn" href="register.php">Зарегистрироваться</a>
+            <a class="add-post-btn" href="register.php">Зарегистрироваться</a>
+        </div>
     </div>
 </body>
 

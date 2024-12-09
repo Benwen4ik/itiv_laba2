@@ -1,12 +1,13 @@
 <?php
 include 'db.php';
 include 'auth.php';
-// session_start();
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+
+$selectedTheme = $_COOKIE['theme'] ?? 'light';
 
 $userId = $_SESSION['user_id'];
 
@@ -25,6 +26,8 @@ try {
     error_log($e->getMessage());
     die("Ошибка: " . $e->getMessage());
 }
+
+include 'header.php';
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +36,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Избранные посты</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo $selectedTheme === 'dark' ? 'styles/style_night.css' : 'styles/style_light.css'; ?>">
 </head>
 <body>
 
@@ -68,8 +71,6 @@ try {
         ?>
     </tbody>
 </table>
-
-<a href="view_posts.php" class="add-post-btn">Вернуться к постам</a>
 
 </body>
 </html>

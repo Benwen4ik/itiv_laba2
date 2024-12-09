@@ -1,19 +1,18 @@
 <?php
-include 'db.php'; // Подключение к базе данных
+include 'db.php';
 include 'auth.php';
-// session_start();
+$selectedTheme = $_COOKIE['theme'] ?? 'light';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: view_posts.php?message=access_denied");
     exit();
 }
 
-// Обработка добавления нового местоположения
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $locationName = trim($_POST['location_name']);
     
+    
     if (!empty($locationName)) {
-        // Проверка на существование местоположения
         $checkSql = "SELECT * FROM locations WHERE name = ?";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->bind_param("s", $locationName);
@@ -21,11 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $checkResult = $checkStmt->get_result();
 
         if ($checkResult->num_rows > 0) {
-            // Местоположение уже существует
             header("Location: add_location.php?message=exists");
             exit();
         } else {
-            // Добавление нового местоположения
             $sql = "INSERT INTO locations (name) VALUES (?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $locationName);
@@ -40,6 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+include 'header.php';
 ?>
 
 <!DOCTYPE html>
@@ -48,10 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Добавить местоположение</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo $selectedTheme === 'dark' ? 'styles/style_night.css' : 'styles/style_light.css'; ?>">
 </head>
 <body>
-<a href="view_posts.php" class="add-post-btn">Вернуться к таблице</a>
 <h1>Добавить новое местоположение</h1>
 
 <?php if (isset($_GET['message'])): ?>

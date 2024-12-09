@@ -1,0 +1,302 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 10px; 
+    background-color: #f4f4f4;
+    color: #333;
+    position: relative; /* Для позиционирования элементов */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 15px 20px;
+    background-color: #ffffff; /* Светлый фон для шапки */
+    color: #333; /* Темный текст */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Легкая тень для глубины */
+}
+
+.logo h1 {
+    margin: 0;
+    color: #2c3e50; /* Темный текст для логотипа */
+}
+
+.user-avatar {
+    width: 80px; 
+    height: 80px; 
+    border-radius: 50%; 
+    border: 2px solid #f4f4f4; /* Светлая обводка */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Легкая тень */
+}
+
+.navbar {
+    margin-left: 20px; /* Отступ между логотипом и навигацией */
+}
+
+.navbar ul {
+    list-style: none; /* Убираем маркеры списка */
+    padding: 0; /* Убираем отступы */
+    margin: 0; /* Убираем отступы */
+    display: flex; /* Выравнивание по горизонтали */
+}
+
+.navbar li {
+    position: relative; /* Для позиционирования выпадающего меню */
+    margin: 0 15px; /* Отступ между элементами навигации */
+}
+
+.navbar a {
+    color: #2c3e50; /* Темный цвет текста */
+    text-decoration: none; /* Убираем подчеркивание */
+    font-size: 18px; /* Размер шрифта */
+    transition: color 0.3s; /* Плавный переход цвета */
+}
+
+.navbar a:hover {
+    color: #34495e; /* Цвет при наведении */
+}
+
+.dropdown-menu {
+    display: none; /* Скрываем меню по умолчанию */
+    position: absolute; /* Абсолютное позиционирование */
+    background-color: #ffffff; /* Светлый фон для выпадающего меню */
+    min-width: 160px; /* Минимальная ширина */
+    border-radius: 5px; /* Закругленные углы */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Легкая тень */
+    z-index: 1000; /* Уровень наложения */
+}
+
+.dropdown-menu a {
+    display: block; /* Блочный элемент */
+    color: #2c3e50; /* Темный цвет текста */
+    padding: 10px; /* Отступы внутри элемента */
+    text-decoration: none; /* Убираем подчеркивание */
+}
+
+.dropdown-menu a:hover {
+    background-color: #ecf0f1; /* Цвет фона при наведении */
+}
+
+.user-buttons {
+    display: flex; /* Выравнивание по горизонтали */
+    flex-wrap: wrap; /* Перенос кнопок на новую строку */
+    gap: 10px; /* Отступ между кнопками */
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+.post-container {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 20px; 
+}
+
+.post {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 10px;
+    flex: 1 1 calc(40% - 30px);
+    box-sizing: border-box;
+    max-width: 500px;
+}
+
+.post h3 {
+    margin: 0 0 10px;
+    font-size: 1.2em;
+}
+
+.post img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    max-height: 200px;
+    object-fit: cover;
+    cursor: pointer; 
+}
+
+.post-actions {
+    margin-top: 10px;
+}
+
+.like-btn, .unlike-btn {
+    display: inline-block;
+    margin: 5px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.like-btn {
+    background-color: #28a745;
+}
+
+.unlike-btn {
+    background-color: #dc3545;
+}
+
+.like-btn:hover, .unlike-btn:hover {
+    transform: scale(1.05);
+}
+
+.add-post-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 20px 0;
+    background-color: #2c3e50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.add-post-btn:hover {
+    background-color: #34495e;
+}
+
+/* Модальное окно */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    position: relative;
+    margin: auto;
+    padding: 0;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.modal-content img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    cursor: pointer;
+}
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev:hover, .next:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+th {
+    background-color: #2c3e50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.search {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+form {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="text"],
+input[type="password"],
+textarea,
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+input[type="submit"]:hover {
+    background-color: #34495e;
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,163 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Светло-синий фон */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Минимальная высота для прижатия подвала */
+}
+
+header {
+    /* background: #007BFF; Темно-синий заголовок */
+    color: black;
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav a {
+    color: black;
+    text-decoration: none;
+}
+
+.intro {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.intro h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.intro p {
+    font-size: 1.2em;
+}
+
+button {
+    background: #007BFF;
+    border: none;
+    color: black;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+button a {
+    color: white;
+    text-decoration: none;
+}
+
+.about {
+    text-align: center;
+    padding: 20px;
+}
+
+.about h2 {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
+
+.about p {
+    font-size: 1.1em;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    /* background: #007BFF; Темно-синий подвал */
+    color: #fff;
+    margin-top: auto; /* Автоматический отступ сверху для прижатия */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 15px 20px;
+    background-color: #ffffff; /* Светлый фон для шапки */
+    color: #333; /* Темный текст */
+}
+
+.logo h1 {
+    margin: 0;
+    color: #2c3e50; /* Темный текст для логотипа */
+}
+
+.user-avatar {
+    width: 80px; 
+    height: 80px; 
+    border-radius: 50%; 
+    border: 2px solid #f4f4f4; /* Светлая обводка */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
+}
+
+.navbar {
+    margin-left: 20px; /* Отступ между логотипом и навигацией */
+}
+
+.navbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.navbar li {
+    position: relative; /* Для позиционирования выпадающего меню */
+    margin: 0 15px;
+}
+
+.navbar a {
+    color: #2c3e50; /* Темный текст */
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.navbar a:hover {
+    color: #34495e; /* Цвет при наведении */
+}
+
+.dropdown-menu {
+    display: none; /* Скрываем меню по умолчанию */
+    position: absolute;
+    background-color: #ffffff; /* Светлый фон выпадающего меню */
+    min-width: 160px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dropdown-menu a {
+    display: block;
+    color: #2c3e50; /* Темный текст */
+    padding: 10px;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background-color: #ecf0f1; /* Цвет фона при наведении */
+}
+
+.user-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Отступ между кнопками */
+}

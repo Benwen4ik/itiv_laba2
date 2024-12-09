@@ -1,15 +1,13 @@
 <?php
 include 'db.php';
 include 'auth.php';
-// session_start();
 
 try {
-
     $languages = ['ru' => 'Русский', 'eng' => 'English'];
     $selectedLanguage = $_COOKIE['language'] ?? 'ru';
+    $selectedTheme = $_COOKIE['theme'] ?? 'light';
     $userRole = $_SESSION['role'] ?? 'user';
 
-    // Проверка на наличие сообщений
     $error = $_SESSION['error'] ?? null;
     $success = $_SESSION['success'] ?? null;
 
@@ -31,7 +29,15 @@ try {
         $weight_likes = $row['weight_likes'];
     }
 
+    // Обработка изменений темы
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['theme'])) {
+            $selectedTheme = $_POST['theme'];
+            setcookie("theme", $selectedTheme, time() + 1440, "/");
+            header("Location: setting.php");
+            exit();
+        }
+
         // Изменение языка
         if (isset($_POST['language'])) {
             $selectedLanguage = $_POST['language'];
@@ -44,7 +50,6 @@ try {
                 $stmt->execute();
                 $stmt->close();
             }
-
             header("Location: setting.php");
             exit();
         }
@@ -55,7 +60,6 @@ try {
             $avatarFile = $_FILES['avatar'];
             $avatarPath = 'uploads/' . basename($avatarFile['name']);
 
-            // Проверка типа файла
             $fileType = strtolower(pathinfo($avatarPath, PATHINFO_EXTENSION));
             if (!in_array($fileType, ['jpg', 'jpeg', 'png', 'gif'])) {
                 $_SESSION['error'] = "Неверный формат файла. Пожалуйста, загрузите изображение";
@@ -64,7 +68,7 @@ try {
             }
 
             // Проверка размера файла
-            $maxFileSize = 8 * 1024 * 1024; // 8 МБ
+            $maxFileSize = 30 * 1024 * 1024; // 30 МБ
             if ($avatarFile['size'] > $maxFileSize) {
                 $_SESSION['error'] = "Размер файла превышает 8 МБ. Пожалуйста, загрузите меньший файл";
                 header("Location: setting.php");
@@ -91,7 +95,8 @@ try {
     $_SESSION['error'] = "Ошибка " . $exp->getMessage();
 }
 
-// $greeting = ($selectedLanguage === 'eng') ? 'Welcome!' : 'Добро пожаловать!';
+include 'header.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -101,11 +106,13 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Настройки</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+        href="<?php echo $selectedTheme === 'dark' ? 'styles/style_night.css' : 'styles/style_light.css'; ?>">
 </head>
 
 <body>
 
+    <br>
     <form action="setting.php" method="POST">
         <label for="language">Выберите язык приветствия:</label>
         <select name="language" id="language">
@@ -115,7 +122,20 @@ try {
                 </option>
             <?php endforeach; ?>
         </select>
+        <br>
         <input type="submit" value="Сохранить">
+    </form>
+    <br>
+
+    <!-- Форма для смены темы -->
+    <form action="setting.php" method="POST">
+        <label for="theme">Выберите тему:</label>
+        <select name="theme" id="theme">
+            <option value="light" <?php echo ($selectedTheme === 'light') ? 'selected' : ''; ?>>Светлая</option>
+            <option value="dark" <?php echo ($selectedTheme === 'dark') ? 'selected' : ''; ?>>Темная</option>
+        </select>
+        <br>
+        <input type="submit" value="Сохранить тему">
     </form>
     <br>
 
@@ -144,6 +164,7 @@ try {
             <input type="submit" value="Сохранить">
         </form>
     <?php endif; ?>
+
     <?php if ($error): ?>
         <div class="error"><?php echo $error; ?></div>
     <?php endif; ?>
@@ -151,7 +172,6 @@ try {
         <div class="success"><?php echo $success; ?></div>
     <?php endif; ?>
 
-    <a href="view_posts.php" class="add-post-btn">Вернуться к постам</a>
 </body>
 
 </html>

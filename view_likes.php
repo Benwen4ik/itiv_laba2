@@ -1,7 +1,8 @@
 <?php
-include 'db.php'; // Подключение к базе данных
+include 'db.php';
 include 'auth.php';
-// session_start();
+
+$selectedTheme = $_COOKIE['theme'] ?? 'light';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -19,6 +20,8 @@ $stmt->bind_param("i", $post_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
+
+include 'header.php';
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +30,7 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Лайки на посте</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo $selectedTheme === 'dark' ? 'styles/style_night.css' : 'styles/style_light.css'; ?>">
 </head>
 <body>
 
